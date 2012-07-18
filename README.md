@@ -99,6 +99,52 @@ files. You'll need to decide which of the two result files to keep, `git add`
 that one, and `git rm` the other one (or opt to keep both using `git add`)
 before you can `git commit` the merge.
 
+# Composite problems
+
+These are the simple baseline cases. However, you can concoct some even worse
+scenarios by combining them. For example, combining tree conflicts with edit
+conflicts:
+
+    $ git checkout master -b problem/left
+    Switched to a new branch 'problem/left'
+    $ git merge edit-conflict/left
+    Fast-forward
+     groceries.txt |    2 +-
+     1 files changed, 1 insertions(+), 1 deletions(-)
+    $ git merge move-move/left
+    Merge made by recursive.
+     groceries.txt => shopping.txt |    0
+     1 files changed, 0 insertions(+), 0 deletions(-)
+     rename groceries.txt => shopping.txt (100%)
+    
+    $ git checkout master -b problem/right
+    Switched to a new branch 'problem/right'
+    $ git merge edit-conflict/right
+    Fast-forward
+     groceries.txt |    2 +-
+     1 files changed, 1 insertions(+), 1 deletions(-)
+    $ git merge move-move/right
+    Merge made by recursive.
+     groceries.txt => grocery-list.txt |    0
+     1 files changed, 0 insertions(+), 0 deletions(-)
+     rename groceries.txt => grocery-list.txt (100%)
+    
+    $ git checkout master -b problem/merge
+    Switched to a new branch 'problem/merge'
+    $ git merge problem/left
+    Fast-forward
+     groceries.txt => shopping.txt |    2 +-
+     1 files changed, 1 insertions(+), 1 deletions(-)
+     rename groceries.txt => shopping.txt (87%)
+    $ git merge problem/right
+    error: refusing to lose untracked file at 'grocery-list.txt'
+    error: refusing to lose untracked file at 'grocery-list.txt'
+    CONFLICT (rename/rename): Rename "groceries.txt"->"shopping.txt" in branch "HEAD" rename "groceries.txt"->"grocery-list.txt" in "problem/right"
+    CONFLICT (rename/rename): Rename "groceries.txt"->"shopping.txt" in branch "HEAD" rename "groceries.txt"->"grocery-list.txt" in "problem/right"
+    Automatic merge failed; fix conflicts and then commit the result.
+
+Describing and resolving this scenario left as an exercise.
+
 # A note about branch stability
 
 To keep the history of this repository simple and easy-to-follow, I regularly
