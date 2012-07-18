@@ -32,6 +32,36 @@ tools, and other approaches to resolving simple conflicts.
 If you get really stuck, run `git reset --hard origin/master` to throw away
 your work and start back from a clean version of the master branch.
 
+# Append conflict
+
+The `append-conflict/left` and `append-conflict/right` branches contain a
+common variation on edit conflicts, where the changes on both branches are at
+the end of the file (and there's no trailing context). The left branch appends
+the line '- Toys for Bob' and the right branch appends the line '- Cookies'.
+
+The process for testing this conflict is as above.
+
+# Edit-move conflict
+
+Edit-move conflicts are a kind of "tree" conflict, where branches make
+incompatible changes to the structure of the project rather than to the
+contents of files. The `edit-move/left` branch changes the line "- Ham" for "-
+Bacon" as above, while the right branch changes the name of the file from
+"groceries.txt" to "grocery-list.txt".
+
+Git will automatically resolve this kind of conflict:
+
+    $ git checkout master -b t
+    $ git merge edit-move/left
+    $ git merge edit-move/right
+    Merge made by recursive.
+     groceries.txt => grocery-list.txt |    0
+     1 files changed, 0 insertions(+), 0 deletions(-)
+     rename groceries.txt => grocery-list.txt (100%)
+
+Note that after this merge, grocery-list.txt still contains the line "- Bacon"
+from the left branch.
+
 # A note about branch stability
 
 To keep the history of this repository simple and easy-to-follow, I regularly
