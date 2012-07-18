@@ -62,6 +62,43 @@ Git will automatically resolve this kind of conflict:
 Note that after this merge, grocery-list.txt still contains the line "- Bacon"
 from the left branch.
 
+# Move-move conflict
+
+Move-move conflicts are a second kind of tree conflict. In this case, both
+branches make changes to the structure of the project in conflicting ways. The
+`move-move/left` branch renames "groceries.txt" to "shopping.txt", while the
+`move-move/right` branch renames "groceries.txt" to "grocery-list.txt". When
+you merge them, Git does something interesting:
+
+    $ git checkout master
+    $ git merge move-move/left
+    Fast-forward
+     groceries.txt => shopping.txt |    0
+     1 files changed, 0 insertions(+), 0 deletions(-)
+     rename groceries.txt => shopping.txt (100%)
+    $ git merge move-move/right
+    error: refusing to lose untracked file at 'grocery-list.txt'
+    error: refusing to lose untracked file at 'grocery-list.txt'
+    CONFLICT (rename/rename): Rename "groceries.txt"->"shopping.txt" in branch "HEAD" rename "groceries.txt"->"grocery-list.txt" in "move-move/right"
+    CONFLICT (rename/rename): Rename "groceries.txt"->"shopping.txt" in branch "HEAD" rename "groceries.txt"->"grocery-list.txt" in "move-move/right"
+    Automatic merge failed; fix conflicts and then commit the result.
+    
+    $ git status
+    # On branch t
+    # Unmerged paths:
+    #   (use "git add/rm <file>..." as appropriate to mark resolution)
+    #
+    #	both deleted:       groceries.txt
+    #	added by them:      grocery-list.txt
+    #	added by us:        shopping.txt
+    #
+    no changes added to commit (use "git add" and/or "git commit -a")
+
+Unlike the edit-conflict case, there are no conflict markers in the individual
+files. You'll need to decide which of the two result files to keep, `git add`
+that one, and `git rm` the other one (or opt to keep both using `git add`)
+before you can `git commit` the merge.
+
 # A note about branch stability
 
 To keep the history of this repository simple and easy-to-follow, I regularly
